@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+# https://en.wikipedia.org/wiki/Human_genome
+# dna_length = 3095693981
+
+if ARGV.length > 0
+  dna_length = ARGV.first.to_i
+else
+  dna_length = 1024
+end
+
+bases = ['A', 'C', 'G', 'T']
+
+puts (0...dna_length).map { bases[rand(4)] }.join
