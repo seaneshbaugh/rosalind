@@ -34,30 +34,17 @@ _main:
         jne     file_open_success
 
 file_open_failure:
-        # Call ___error to get a pointer to errno
-        callq   ___error
+        # Load a pointer to the file open error message as the first argument to _cleanup_after_error
+        leaq    L_.file_open_error_message(%rip), %rdi
 
-        # Set errno as the first argument to _strerror
-        movq    (%rax), %rdi
+        # Set 0 as the second argument (file pointer) to _cleanup_after_error
+        movq    $0, %rsi
 
-        # Call _strerror to get a pointer to a string represention of errno
-        callq   _strerror
+        # Set 0 as the third argument (buffer pointer) to _cleanup_after_error
+        movq    $0, %rdx
 
-        # Set a pointer to stderr as the first argument to _fprintf
-        movq    ___stderrp@GOTPCREL(%rip), %r8
-        movq    (%r8), %rdi
-
-        # Load a pointer to the file open error message as the second argument to _fprintf
-        leaq    L_.file_open_error_message(%rip), %rsi
-
-        # Set the pointer returned by _strerror as the third argument to _fprintf
-        movq    %rax, %rdx
-
-        # No floating point arguments were passed so set al to 0
-        movb    $0, %al
-
-        # Call _fprintf to print the error to stderr
-        callq   _fprintf
+        # Call _cleanup_after_error to handle _fopen failure
+        callq   _cleanup_after_error
 
         # Set rax to 1 for the program return value
         movq    $1, %rax
@@ -88,36 +75,17 @@ file_open_success:
         jne     file_seek_end_success
 
 file_seek_end_failure:
-        # Call ___error to get errno
-        callq   ___error
+        # Load a pointer to the file seek end error message as the first argument to _cleanup_after_error
+        leaq    L_.file_seek_end_error_message(%rip), %rdi
 
-        # Set errno as the first argument to _strerror
-        movq    (%rax), %rdi
+        # Set the file pointer as the second argument to _cleanup_after_error
+        movq    -24(%rbp), %rsi
 
-        # Call _strerror to get a pointer to a string represention of errno
-        callq   _strerror
+        # Set 0 as the third argument (buffer pointer) to _cleanup_after_error
+        movq    $0, %rdx
 
-        # Set a pointer to stderr as the first argument to _fprintf
-        movq    ___stderrp@GOTPCREL(%rip), %r8
-        movq    (%r8), %rdi
-
-        # Load a pointer to the file seek end error message as the second argument to _fprintf
-        leaq    L_.file_seek_end_error_message(%rip), %rsi
-
-        # Set the pointer returned by _strerror as the third argument to _fprintf
-        movq    %rax, %rdx
-
-        # No floating point arguments were passed so set al to 0
-        movb    $0, %al
-
-        # Call _fprintf to print the error to stderr
-        callq   _fprintf
-
-        # Set the file pointer as the first argument to _fclose
-        movq    -24(%rbp), %rdi
-
-        # Call _fclose to close the file
-        callq   _fclose
+        # Call _cleanup_after_error to handle _fseeko failure
+        callq   _cleanup_after_error
 
         # Set rax to 1 for the program return value
         movq    $1, %rax
@@ -139,36 +107,17 @@ file_seek_end_success:
         jne     file_tell_success
 
 file_tell_failure:
-        # Call ___error to get errno
-        callq   ___error
+        # Load a pointer to the file tell error message as the first argument to _cleanup_after_error
+        leaq    L_.file_tell_error_message(%rip), %rdi
 
-        # Set errno as the first argument to _strerror
-        movq    (%rax), %rdi
+        # Set the file pointer as the second argumnet to _cleanup_after_error
+        movq    -24(%rbp), %rsi
 
-        # Call _strerror to get a pointer to a string represention of errno
-        callq   _strerror
+        # Set 0 as the third argument (buffer pointer) to _cleanup_after_error
+        movq    $0, %rdx
 
-        # Set a pointer to stderr as the first argument to _fprintf
-        movq    ___stderrp@GOTPCREL(%rip), %r8
-        movq    (%r8), %rdi
-
-        # Load a pointer to the file tell error message as the second argument to _fprintf
-        leaq    L_.file_tell_error_message(%rip), %rsi
-
-        # Set the pointer returned by _strerror as the third argument to _fprintf
-        movq    %rax, %rdx
-
-        # No floating point arguments were passed so set al to 0
-        movb    $0, %al
-
-        # Call _fprintf to print the error to stderr
-        callq   _fprintf
-
-        # Set the file pointer as the first argument to _fclose
-        movq    -24(%rbp), %rdi
-
-        # Call _fclose to close the file
-        callq   _fclose
+        # Call _cleanup_after_error to handle _ftello failure
+        callq   _cleanup_after_error
 
         # Set rax to 1 for the program return value
         movq    $1, %rax
@@ -216,36 +165,17 @@ file_seek_start:
         jne     file_seek_start_success
 
 file_seek_start_failure:
-        # Call ___error to get errno
-        callq   ___error
+        # Load a pointer to the file seek start error message as the first argument to _cleanup_after_error
+        leaq    L_.file_seek_start_error_message(%rip), %rdi
 
-        # Set errno as the first argument to _strerror
-        movq    (%rax), %rdi
+        # Set the file pointer as the second argument to _cleanup_after_error
+        movq    -24(%rbp), %rsi
 
-        # Call _strerror to get a pointer to a string represention of errno
-        callq   _strerror
+        # Set 0 as the third argument (buffer pointer) to _cleanup_after_error
+        movq    $0, %rdx
 
-        # Set a pointer to stderr as the first argument to _fprintf
-        movq    ___stderrp@GOTPCREL(%rip), %r8
-        movq    (%r8), %rdi
-
-        # Load a pointer to the file seek start error message as the second argument to _fprintf
-        leaq    L_.file_seek_start_error_message(%rip), %rsi
-
-        # Set the pointer returned by _strerror as the third argument to _fprintf
-        movq    %rax, %rdx
-
-        # No floating point arguments were passed so set al to 0
-        movb    $0, %al
-
-        # Call _fprintf to print the error to stderr
-        callq   _fprintf
-
-        # Set the file pointer as the first argument to _fclose
-        movq    -24(%rbp), %rdi
-
-        # Call _fclose to close the file
-        callq   _fclose
+        # Call _cleanup_after_error to handle _fseeko failure
+        callq   _cleanup_after_error
 
         # Set rax to 1 for the program return value
         movq    $1, %rax
@@ -270,36 +200,17 @@ file_seek_start_success:
         jne     buffer_calloc_success
 
 buffer_calloc_failure:
-        # Call ___error to get errno
-        callq   ___error
+        # Load a pointer to the buffer calloc error message as the first argument to _cleanup_after_error
+        leaq    L_.buffer_calloc_error_message(%rip), %rdi
 
-        # Set errno as the first argument to _strerror
-        movq    (%rax), %rdi
+        # Set the file pointer as the second argument to _cleanup_after_error
+        movq    -24(%rbp), %rsi
 
-        # Call _strerror to get a pointer to a string represention of errno
-        callq   _strerror
+        # Set 0 as the third argument (buffer pointer) to _cleanup_after_error
+        movq    $0, %rdx
 
-        # Set a pointer to stderr as the first argument to _fprintf
-        movq    ___stderrp@GOTPCREL(%rip), %r8
-        movq    (%r8), %rdi
-
-        # Load a pointer to the buffer calloc error message as the second argument to _fprintf
-        leaq    L_.buffer_calloc_error_message(%rip), %rsi
-
-        # Set the pointer returned by _strerror as the third argument to _fprintf
-        movq    %rax, %rdx
-
-        # No floating point arguments were passed so set al to 0
-        movb    $0, %al
-
-        # Call _fprintf to print the error to stderr
-        callq   _fprintf
-
-        # Set the file pointer as the first argument to _fclose
-        movq    -24(%rbp), %rdi
-
-        # Call _fclose to close the file
-        callq   _fclose
+        # Call _cleanup_after_error to handle _calloc failure
+        callq   _cleanup_after_error
 
         # Set rax to 1 for the program return value
         movq    $1, %rax
@@ -320,17 +231,7 @@ buffer_calloc_success:
         xorq    %r14, %r14
         xorq    %r15, %r15
 
-fread_loop_start:
-#        leaq    L_.debug_value(%rip), %rdi
-#        movq    -32(%rbp), %rsi
-#        movb    $0, %al
-#        callq   _printf
-
-#        leaq    L_.debug_value(%rip), %rdi
-#        movq    -56(%rbp), %rsi
-#        movb    $0, %al
-#        callq   _printf
-
+file_read_loop_start:
         # Temporarily move the total number of bytes read into r8 for comparison
         movq    -56(%rbp), %r8
 
@@ -338,7 +239,7 @@ fread_loop_start:
         cmp     -32(%rbp), %r8
 
         # Jump to the end of the read loop if the total number of bytes read is greater than or equal to the file size
-        jae      read_loop_end
+        jae      file_read_loop_end
 
         # Set the pointer to the buffer as the first argument to _fread
         movq    -48(%rbp), %rdi
@@ -355,18 +256,51 @@ fread_loop_start:
         # Call _fread to read up to the buffer size number of bytes
         callq   _fread
 
-        # Check for _fread failure goes here
-
         # Save the actual number of bytes for later
         movq    %rax, -64(%rbp)
 
+        # Set the file pointer as the first argument to _ferror
+        movq    -24(%rbp), %rdi
+
+        # Call _ferror to check to see if the error indicator is set
+        callq   _ferror
+
+        # Check the result of _ferror, 0 = no error, non-0 = error
+        cmp     $0, %rax
+
+        # Jump ahead if _fread worked
+        je     file_read_success
+
+file_read_failure:
+        # Load a pointer to the file read error message as the first argument to _cleanup_after_error
+        leaq    L_.file_read_error_message(%rip), %rdi
+
+        # Set the file pointer as the second argument to _cleanup_after_error
+        movq    -24(%rbp), %rsi
+
+        # Set the buffer pointer as the third argument to _cleanup_after_error
+        movq    -48(%rbp), %rdx
+
+        # Call _cleanup_after_error to handle _calloc failure
+        callq   _cleanup_after_error
+
+        # Set rax to 1 for the program return value
+        movq    $1, %rax
+
+        # Jump to the program exit
+        jmp     exit
+
+file_read_success:
+        # Temporarily move the actual number of bytes read into r8 for add
+        movq    -64(%rbp), %r8
+
         # Add the actual number of bytes read to the total number of bytes read
-        addq    %rax, -56(%rbp)
+        addq    %r8, -56(%rbp)
 
         # Set the current offset in the buffer to 0
         movq    $0, -72(%rbp)
 
-print_loop_start:
+base_check_loop_start:
         # Temporarily move the current offset in the buffer into r8 for comparison
         movq    -72(%rbp), %r8
 
@@ -374,7 +308,7 @@ print_loop_start:
         cmp     -64(%rbp), %r8
 
         # Jump to the end of the print loop if the current offset in the buffer is greater than or equal to the actual number of bytes read
-        jae      print_loop_end
+        jae      base_check_loop_end
 
         # Move the current offset in the buffer into rax for movsbl
         movq    -72(%rbp), %rax
@@ -419,28 +353,28 @@ base_g:
         addq $1, %r14
 
 done_checking_base:
-#        leaq    L_.single_character(%rip), %rdi
-
-#        movq    -72(%rbp), %rax
-#        movq    -48(%rbp), %rcx
-#        movsbl  (%rcx, %rax), %esi
-#        movb    $0, %al
-
-#        callq   _printf
-
+        # Incriment the current offset in the buffer by 1
         addq    $1, -72(%rbp)
 
-        jmp     print_loop_start
+        # Jump back up to the start of the base check loop
+        jmp     base_check_loop_start
 
-print_loop_end:
-        jmp     fread_loop_start
+base_check_loop_end:
+        # Jump back up to the start of the fread loop
+        jmp     file_read_loop_start
 
-read_loop_end:
+file_read_loop_end:
         # Set the file pointer as the first argument to _fclose
         movq    -24(%rbp), %rdi
 
         # Call _fclose to close the file
         callq   _fclose
+
+        # Set the pointer to the buffer as the first argument to _free
+        movq    -48(%rbp), %rdi
+
+        # Call _free to free the buffer
+        callq   _free
 
         leaq    L_.base_output(%rip), %rdi
         movq    %r12, %rsi
@@ -469,6 +403,107 @@ exit:
         popq    %rbp
         retq
 
+# rdi = error mesage
+# rsi = file pointer
+# rdx = buffer pointer
+	.globl	_cleanup_after_error
+	.align	4, 0x90
+_cleanup_after_error:
+        # _handle_errors prologue
+        pushq   %rbp
+        movq	%rsp, %rbp
+
+        # Allocate 32 bytes on the stack
+        subq    $32, %rsp
+
+        # Save the error message string pointer for later
+        movq    %rdi, -8(%rbp)
+
+        # Save the file pointer for later
+        movq    %rsi, -16(%rbp)
+
+        # Save the buffer pointer for later
+        movq    %rdx, -24(%rbp)
+
+        leaq    L_.debug_string(%rip), %rdi
+        movq    -8(%rbp), %rsi
+        movb    $0, %al
+        callq   _printf
+
+        leaq    L_.debug_value(%rip), %rdi
+        movq    -16(%rbp), %rsi
+        movb    $0, %al
+        callq   _printf
+
+        leaq    L_.debug_value(%rip), %rdi
+        movq    -24(%rbp), %rsi
+        movb    $0, %al
+        callq   _printf
+
+        # Check to see if a pointer to an error message string was passed
+        cmpq    $0, -8(%rbp)
+
+        # Jump ahead if not
+        je      skip_printing_error_message
+
+        # Call ___error to get errno
+        callq   ___error
+
+        # Set errno as the first argument to _strerror
+        movq    (%rax), %rdi
+
+        # Call _strerror to get a pointer to a string represention of errno
+        callq   _strerror
+
+        # Set a pointer to stderr as the first argument to _fprintf
+        movq    ___stderrp@GOTPCREL(%rip), %r8
+        movq    (%r8), %rdi
+
+        # Set the pointer to the error message string as the second argument to _fprintf
+        movq    -8(%rbp), %rsi
+
+        # Set the pointer returned by _strerror as the third argument to _fprintf
+        movq    %rax, %rdx
+
+        # No floating point arguments were passed so set al to 0
+        movb    $0, %al
+
+        # Call _fprintf to print the error to stderr
+        callq   _fprintf
+
+skip_printing_error_message:
+        # Check to see if a file pointer was passed
+        cmpq    $0, -16(%rbp)
+
+        # Jump ahead if not
+        je      skip_close_file
+
+        # Set the file pointer as the first argument to _fclose
+        movq    -16(%rbp), %rdi
+
+        # Call _fclose to close the file
+        callq   _fclose
+
+skip_close_file:
+        # Check to see if a pointer to a buffer was passed
+        cmpq    $0, -24(%rbp)
+
+        # Jump ahead if not
+        je      skip_free_buffer
+
+        # Set the pointer to a buffer as the first argument to _free
+        movq    -24(%rbp), %rdi
+
+        # Call _free to free the buffer
+        callq   _free
+
+skip_free_buffer:
+        addq    $32, %rsp
+
+        popq    %rbp
+
+        retq
+
 .section __TEXT,__cstring,cstring_literals
 L_.file_name:
         .asciz  "data/001.txt"
@@ -491,6 +526,9 @@ L_.file_seek_start_error_message:
 L_.buffer_calloc_error_message:
         .asciz  "Could not allocate memory for buffer: %s\n"
 
+L_.file_read_error_message:
+        .asciz  "Could not read from file: %s\n"
+
 L_.base_output:
         .asciz  "%llu %llu %llu %llu\n"
 
@@ -499,5 +537,8 @@ L_.single_character:
 
 L_.debug_value:
         .asciz  "DEBUG VALUE: %d\n"
+
+L_.debug_string:
+        .asciz  "DEBUG STRING: %s\n"
 
 .subsections_via_symbols
